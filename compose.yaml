@@ -18,7 +18,7 @@ services:
   mysql:
     image: mysql:8.0
     networks:
-      - to_do_app    
+      - to_do_app
     volumes:
       - todo-mysql-data:/var/lib/mysql
     environment:
@@ -28,4 +28,6 @@ services:
 volumes:
   todo-mysql-data:
 networks:
-  
+  to_do_app:
+    driver: bridge
+
