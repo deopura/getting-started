@@ -12,16 +12,7 @@ pipeline {
           }
         }
 
-        stage('Build') {
-            steps {
-                echo 'Building..'
-                // Check the docker-compose version
-                sh 'docker compose version'
-                // Bring up the services
-                sh 'docker compose up -d'               // Ensure the services are running
-            }
-        }
-        stage('SonarQube Analysis') {
+  stage('SonarQube Analysis') {
             steps {
             withSonarQubeEnv('SonarQube') {
                 script {
@@ -31,8 +22,18 @@ pipeline {
                 }
                 }
             }
+            }      
+
+        stage('Build') {
+            steps {
+                echo 'Building..'
+                // Check the docker-compose version
+                sh 'docker compose version'
+                // Bring up the services
+                sh 'docker compose up -d'               // Ensure the services are running
             }
-        
+        }
+
         stage('Test') {
             steps {
                 echo 'Testing..'
