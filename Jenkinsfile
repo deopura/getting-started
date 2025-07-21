@@ -8,7 +8,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/deopura/getting-started.git'
+                // git 'https://github.com/deopura/getting-started.git'
+                git branch: 'main', url: 'https://github.com/deopura/getting-started.git'
           }
         }
 
@@ -30,7 +31,7 @@ pipeline {
                 // Check the docker-compose version
                 sh 'docker compose version'
                 // Bring up the services
-                sh 'docker compose up -d'               // Ensure the services are running
+                //sh 'docker compose up -d'               // Ensure the services are running
             }
         }
 
