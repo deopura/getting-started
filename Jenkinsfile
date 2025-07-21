@@ -1,7 +1,23 @@
 pipeline {
     agent any
+    
+    tools {
+        // Ensure the Sonar Scanner is available
+        sonarQubeScanner 'SonarScanner'
+    }
+    
+    environment {
+        // Use the configured SonarQube instance name
+        SONARQUBE = 'MySonarQube'
+    }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/deopura/getting-started.git'
+          }
+        }
+
         stage('Build') {
             steps {
                 echo 'Building..'
