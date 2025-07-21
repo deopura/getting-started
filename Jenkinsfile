@@ -1,15 +1,9 @@
 pipeline {
     agent any
-    
-    tools {
-        // Ensure the Sonar Scanner is available
-        sonarQubeScanner 'SonarScanner'
-    }
-    
     environment {
-        // Use the configured SonarQube instance name
-        SONARQUBE = 'MySonarQube'
-    }
+    SONAR_HOST = 'http://localhost:9000'
+    SONAR_TOKEN = credentials('sonarqubetoken')
+  }
 
     stages {
         stage('Checkout') {
@@ -27,6 +21,18 @@ pipeline {
                 sh 'docker compose up -d'               // Ensure the services are running
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+            withSonarQubeEnv('SonarQube') {
+                script {
+                def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sonartest -Dsonar.sources=."
+                    // sh "${scannerHome}/bin/sonar-scanner"
+                }
+                }
+            }
+            }
+        
         stage('Test') {
             steps {
                 echo 'Testing..'
