@@ -1,57 +1,67 @@
 pipeline {
     agent any
+
     environment {
-    SONAR_HOST = 'http://localhost:9000'
-    SONAR_TOKEN = credentials('sonarqubetoken')
-  }
+        SONAR_HOST = 'http://localhost:9000'
+        SONAR_TOKEN = credentials('sonarqubetoken')  // Uses Jenkins credentials securely
+    }
+
+    tools {
+        // Declare SonarScanner to simplify later access
+        sonarScanner 'SonarScanner'
+    }
 
     stages {
 
-    stage('Clean Workspace') {
+        stage('Clean Workspace') {
             steps {
-                cleanWs()
+                cleanWs()  // Cleans workspace before pipeline starts
             }
-        }
-    
-        stage('Checkout') {
-            steps {
-                // git 'https://github.com/deopura/getting-started.git'
-                git branch: 'main', url: 'https://github.com/deopura/getting-started.git'
-          }
         }
 
-  stage('SonarQube Analysis') {
+        stage('Checkout') {
             steps {
-            withSonarQubeEnv('SonarQube') {
-                script {
-                def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sonartest -Dsonar.sources=src"
-                    // sh "${scannerHome}/bin/sonar-scanner"
-                }
+                git branch: 'main', url: 'https://github.com/deopura/getting-started.git'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        sonar-scanner \
+                        -Dsonar.projectKey=sonartest \
+                        -Dsonar.sources=src \
+                        -Dsonar.host.url=${SONAR_HOST} \
+                        -Dsonar.login=${SONAR_TOKEN}
+                    '''
                 }
             }
-            }      
+        }
 
         stage('Build') {
             steps {
-                echo 'Building..'
-                // Check the docker-compose version
+                echo 'Building...'
                 sh 'docker compose version'
-                // Bring up the services
-                //sh 'docker compose up -d'               // Ensure the services are running
+                // Optional: bring up services if needed
+                // sh 'docker compose up -d'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Testing..'
+                echo 'Running tests...'
+                // Insert your test command here
             }
         }
+
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                echo 'Deploying...'
                 sh 'docker compose ps'
             }
         }
     }
+
+    
 }
