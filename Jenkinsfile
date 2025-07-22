@@ -22,8 +22,6 @@ pipeline {
             }
         }
 
-                }
-
         stage('SonarQube Analysis') {
             steps {
                 def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
