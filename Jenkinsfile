@@ -6,10 +6,7 @@ pipeline {
         SONAR_TOKEN = credentials('sonarqubetoken')  // Uses Jenkins credentials securely
     }
 
-    tools {
-        // Declare SonarScanner to simplify later access
-        sonarScanner 'SonarScanner'
-    }
+
 
     stages {
 
